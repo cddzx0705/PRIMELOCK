@@ -3511,47 +3511,64 @@ async function checkKey(val) {
 
     const data = await res.json();
 
-    if (!data.success) {
+   if (!data.success) {
 
-      _showKeyError(
-        'fa-solid fa-circle-xmark',
-        'Key không hợp lệ',
-        data.message || 'Key không tồn tại'
-      );
+  // KEY SAI
+  if (data.status === "INVALID_KEY") {
 
-      return;
-    }
-
-    localStorage.setItem('_pl_saved_key', val);
-
-    savedKeyCheckDone = true;
-    keyValidated = true;
-
-    keyInput.classList.add('valid');
-
-    setStatus(
-      'success',
-      'fa-solid fa-circle-check',
-      'Key hợp lệ!',
-      'Đang chuyển vào ứng dụng…'
+    _showKeyError(
+      'fa-solid fa-circle-xmark',
+      'KEY SAI',
+      'Key không tồn tại'
     );
 
-    setTimeout(() => {
-      showTab('app');
-      initApp();
-    }, 2000);
-
-  } catch (err) {
-
-    savedKeyCheckDone = true;
-
-    setStatus(
-      'error',
-      'fa-solid fa-wifi',
-      'Key đã bị khóa',
-      'Không thể kết nối  Server'
-    );
   }
+
+  // KEY HẾT HẠN
+  else if (data.status === "EXPIRED_KEY") {
+
+    _showKeyError(
+      'fa-solid fa-clock',
+      'KEY HẾT HẠN',
+      'Key đã hết thời gian sử dụng'
+    );
+
+  }
+
+  // FULL SLOT
+  else if (data.status === "FULL_SLOT") {
+
+    _showKeyError(
+      'fa-solid fa-users',
+      'KEY FULL SLOT',
+      'Key đã đủ số thiết bị'
+    );
+
+  }
+
+  // KEY BỊ KHÓA
+  else if (data.status === "BANNED_KEY") {
+
+    _showKeyError(
+      'fa-solid fa-ban',
+      'KEY ĐÃ BỊ KHÓA',
+      'Liên hệ admin để mở khóa'
+    );
+
+  }
+
+  // LỖI KHÁC
+  else {
+
+    _showKeyError(
+      'fa-solid fa-triangle-exclamation',
+      'LỖI SERVER',
+      'Không thể xác thực key'
+    );
+
+  }
+
+  return;
 }
 
   /* ════════════════════════════════════
